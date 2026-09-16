@@ -1,16 +1,16 @@
 export function formatMoney(value) {
   const num = Number(value ?? 0);
-  return `₹${num.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `AED ${num.toLocaleString("en-AE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 export function formatDate(value) {
   if (!value) return "";
-  return new Date(value).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+  return new Date(value).toLocaleDateString("en-AE", { day: "2-digit", month: "short", year: "numeric" });
 }
 
 export function formatDateTime(value) {
   if (!value) return "";
-  return new Date(value).toLocaleString("en-IN", {
+  return new Date(value).toLocaleString("en-AE", {
     day: "2-digit",
     month: "short",
     year: "numeric",

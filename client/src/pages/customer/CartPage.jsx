@@ -5,6 +5,7 @@ import { formatMoney } from "../../utils/format";
 import Spinner from "../../components/Spinner";
 import ErrorBanner from "../../components/ErrorBanner";
 import EmptyState from "../../components/EmptyState";
+import AvailableCoupons from "../../components/AvailableCoupons";
 
 export default function CartPage() {
   const { cart, loading, error, refresh, updateItemQuantity, removeItem, applyCoupon, removeCoupon } = useCart();
@@ -45,19 +46,23 @@ export default function CartPage() {
     }
   }
 
-  async function handleApplyCoupon(e) {
-    e.preventDefault();
-    if (!couponInput.trim()) return;
+  async function submitCoupon(code) {
+    if (!code.trim()) return;
     setApplying(true);
     setCouponError(null);
     try {
-      await applyCoupon(couponInput.trim());
+      await applyCoupon(code.trim());
       setCouponInput("");
     } catch (err) {
       setCouponError(err.message || "This coupon could not be applied.");
     } finally {
       setApplying(false);
     }
+  }
+
+  function handleApplyCoupon(e) {
+    e.preventDefault();
+    submitCoupon(couponInput);
   }
 
   async function handleRemoveCoupon() {
@@ -171,6 +176,14 @@ export default function CartPage() {
                     {applying ? "Applying..." : "Apply"}
                   </button>
                 </form>
+              )}
+              {!cart.coupon && (
+                <AvailableCoupons
+                  cartId={cart.id}
+                  onSelect={submitCoupon}
+                  disabled={applying}
+                  refreshKey={`${cart.subtotal}-${cart.items.length}`}
+                />
               )}
               {couponError && <p className="mt-2 text-xs font-medium text-red-600">{couponError}</p>}
             </div>

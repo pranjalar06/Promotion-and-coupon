@@ -144,4 +144,35 @@ describe("Cart and coupon application", () => {
     expect(res.body.total).toBe(res.body.subtotal);
     expect(res.body.coupon).toBeNull();
   });
+
+  test("GET /carts/:id/coupons/available marks coupons eligible/ineligible for the current cart", async () => {
+    const electronics = await createCategory({ name: "Electronics", slug: "electronics-avail" });
+    const fashion = await createCategory({ name: "Fashion", slug: "fashion-avail" });
+    const laptop = await createProduct(electronics.id, { name: "Laptop", price: "200.00" });
+
+    const eligiblePromo = await createPromotion({ code: "ELIGIBLE1", minimumOrderValue: "100.00" });
+    const tooHighMinPromo = await createPromotion({ code: "TOOHIGHMIN", minimumOrderValue: "5000.00" });
+    const wrongCategoryPromo = await createPromotion({
+      code: "WRONGCAT",
+      appliesToAllCategories: false,
+      categoryIds: [fashion.id],
+    });
+
+    const { token } = await signup();
+    const cartId = await getMyCartId(token);
+    await request(app).post(`/api/v1/carts/${cartId}/items`).set("Authorization", `Bearer ${token}`).send({ productId: laptop.id, quantity: 1 });
+
+    const res = await request(app).get(`/api/v1/carts/${cartId}/coupons/available`).set("Authorization", `Bearer ${token}`);
+    expect(res.status).toBe(200);
+
+    const byCode = Object.fromEntries(res.body.promotions.map((p) => [p.code, p]));
+    expect(byCode[eligiblePromo.code].eligible).toBe(true);
+    expect(byCode[eligiblePromo.code].reasonMessage).toBeNull();
+
+    expect(byCode[tooHighMinPromo.code].eligible).toBe(false);
+    expect(byCode[tooHighMinPromo.code].reasonCode).toBe("MIN_ORDER_VALUE_NOT_MET");
+
+    expect(byCode[wrongCategoryPromo.code].eligible).toBe(false);
+    expect(byCode[wrongCategoryPromo.code].reasonCode).toBe("NO_ELIGIBLE_ITEMS");
+  });
 });

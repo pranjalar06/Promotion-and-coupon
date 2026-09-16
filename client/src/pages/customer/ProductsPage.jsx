@@ -16,6 +16,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [addingId, setAddingId] = useState(null);
+  const [justAddedId, setJustAddedId] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const { addItem } = useCart();
 
@@ -50,6 +51,8 @@ export default function ProductsPage() {
     try {
       await addItem(product.id, 1);
       setFeedback({ type: "success", text: `${product.name} added to cart.` });
+      setJustAddedId(product.id);
+      setTimeout(() => setJustAddedId(null), 1500);
     } catch (err) {
       setFeedback({ type: "error", text: err.message || "Could not add item to cart." });
     } finally {
@@ -104,7 +107,13 @@ export default function ProductsPage() {
       {!loading && !error && products.length > 0 && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {products.map((p) => (
-            <ProductCard key={p.id} product={p} onAddToCart={handleAddToCart} adding={addingId === p.id} />
+            <ProductCard
+              key={p.id}
+              product={p}
+              onAddToCart={handleAddToCart}
+              adding={addingId === p.id}
+              justAdded={justAddedId === p.id}
+            />
           ))}
         </div>
       )}

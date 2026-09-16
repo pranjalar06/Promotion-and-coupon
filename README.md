@@ -185,6 +185,10 @@ stock) → recalculates the subtotal → re-evaluates the coupon (if any) → th
 
 There are exactly two payment buttons on `/checkout` — **Payment Failed** and **Pay & Place
 Order** — no real payment gateway is integrated and no card/UPI/bank details are collected.
+There is also no separate customer-info form to fill in first: `customerName`/`customerEmail`
+on the order always come from the authenticated JWT identity server-side (never from the
+request body — a client cannot spoof another name/email onto an order), so both buttons are
+clickable immediately on arriving at `/checkout`.
 
 ### Concurrency
 
@@ -224,6 +228,8 @@ All routes are under `/api/v1`. Authenticated routes expect `Authorization: Bear
 POST   /auth/signup                         POST   /auth/login              GET /auth/me
 
 GET    /categories                          GET    /products                GET /products/:id
+
+GET    /promotions                          # currently-usable coupons a shopper can browse/apply
 
 GET    /carts/me                            GET    /carts/:id
 POST   /carts/:id/items                     PATCH  /carts/:id/items/:itemId  DELETE /carts/:id/items/:itemId
@@ -296,8 +302,12 @@ Two ways to create the schema — pick whichever fits:
   psql -d promo_db -f server/prisma/schema_data.sql
   ```
   Password hashes travel as bcrypt hashes, not plaintext, so existing accounts keep working
-  with their original password. Regenerate this file with `pg_dump` whenever you want an
-  up-to-date snapshot — it's a point-in-time export, not kept automatically in sync.
+  with their original password. Both `schema.sql` and `schema_data.sql` are point-in-time
+  exports, not kept automatically in sync — regenerate them any time with:
+  ```bash
+  cd server && npm run db:dump
+  ```
+  (uses `pg_dump`, resolved from `PATH`, `PGDUMP_PATH`, or a standard Windows PostgreSQL install)
 
 ### Option A — Docker for Postgres only
 
@@ -334,10 +344,10 @@ script (`admin@promo.test` / `Admin@12345`, or whatever you set in `.env`) at `/
 
 | Code | Type | Value | Min Order | Max Discount | Categories | Limits |
 |---|---|---|---|---|---|---|
-| `SAVE20` | % | 20% | ₹300 | ₹500 | All | 100 total / 1 per user |
-| `TECH20` | % | 20% | ₹1,000 | ₹1,000 | Electronics only | 50 total / 1 per user |
-| `FLAT100` | Flat | ₹100 | ₹1,000 | — | All | 100 total |
-| `EXPIRED20` | % | 20% | — | ₹500 | All | already expired, for testing |
+| `SAVE20` | % | 20% | AED 50 | AED 75 | All | 100 total / 1 per user |
+| `TECH20` | % | 20% | AED 150 | AED 150 | Electronics only | 50 total / 1 per user |
+| `FLAT15` | Flat | AED 15 | AED 150 | — | All | 100 total |
+| `EXPIRED20` | % | 20% | — | AED 75 | All | already expired, for testing |
 
 ## 14. Testing
 

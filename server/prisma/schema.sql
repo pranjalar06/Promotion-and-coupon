@@ -1,13 +1,14 @@
 --
 -- PostgreSQL database dump
 --
+
+
 -- Schema-only dump of the PromoStore database. Use this to bootstrap a fresh
 -- PostgreSQL database without needing Node/Prisma installed:
 --   createdb promo_db
 --   psql -d promo_db -f schema.sql
 -- This does NOT seed any data — run `npm run seed` (server/prisma/seed.js)
 -- afterwards for demo categories/products/promotions/admin account.
-
 -- Dumped from database version 18.4
 -- Dumped by pg_dump version 18.4
 
@@ -553,4 +554,5 @@ ALTER TABLE ONLY public.redemptions
 --
 -- PostgreSQL database dump complete
 --
+
 

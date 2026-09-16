@@ -35,7 +35,14 @@ export default function CustomerLayout() {
                 Categories
               </NavLink>
               <NavLink to="/cart" className={navLinkClass}>
-                Cart{itemCount > 0 ? ` (${itemCount})` : ""}
+                <span className="inline-flex items-center gap-1.5">
+                  Cart
+                  {itemCount > 0 && (
+                    <span className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-brand-600 px-1 text-xs font-semibold text-white">
+                      {itemCount}
+                    </span>
+                  )}
+                </span>
               </NavLink>
               <NavLink to="/orders" className={navLinkClass}>
                 Orders

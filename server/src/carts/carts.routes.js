@@ -12,6 +12,7 @@ router.patch("/:id/items/:itemId", controller.updateItem);
 router.delete("/:id/items/:itemId", controller.removeItem);
 
 router.get("/:id/pricing", controller.getPricing);
+router.get("/:id/coupons/available", controller.listAvailableCoupons);
 router.post("/:id/coupons", controller.applyCoupon);
 router.delete("/:id/coupons/:code", controller.removeCoupon);
 

@@ -63,7 +63,7 @@ function evaluatePromotion(promotion, ctx) {
   const minimumOrderValue = new Decimal(promotion.minimumOrderValue);
   if (eligibleSubtotal.lt(minimumOrderValue)) {
     const shortfall = minimumOrderValue.minus(eligibleSubtotal);
-    return fail(CODES.MIN_ORDER, `Add ₹${shortfall.toFixed(2)} more to use this coupon.`, {
+    return fail(CODES.MIN_ORDER, `Add AED ${shortfall.toFixed(2)} more to use this coupon.`, {
       minimumOrderValue: minimumOrderValue.toFixed(2),
       currentSubtotal: eligibleSubtotal.toFixed(2),
       shortfall: shortfall.toFixed(2),

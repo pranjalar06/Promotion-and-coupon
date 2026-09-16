@@ -7,20 +7,6 @@ const promotionEngine = require("../promotions/promotionEngine");
 const { normalizePromotion } = require("../promotions/promotions.mapper");
 const { serializeOrder } = require("./orders.mapper");
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function validateCustomerInfo({ customerName, customerEmail, customerAddress }) {
-  if (!customerName || !customerName.trim()) {
-    throw new AppError(422, "VALIDATION_ERROR", "Name is required.");
-  }
-  if (!customerEmail || !EMAIL_RE.test(customerEmail)) {
-    throw new AppError(422, "VALIDATION_ERROR", "A valid email is required.");
-  }
-  if (!customerAddress || !customerAddress.trim()) {
-    throw new AppError(422, "VALIDATION_ERROR", "Address is required.");
-  }
-}
-
 // Reserves an idempotency key up-front (outside the main transaction) so that
 // concurrent/duplicate submissions of the same checkout request cannot both proceed.
 async function claimIdempotencyKey(key, userId) {
@@ -80,13 +66,20 @@ function buildLineItemsFromFreshProducts(cartItems, products) {
 /**
  * Final, authoritative checkout. Re-validates everything server-side; the
  * cart/pricing previously displayed to the client is never trusted.
+ *
+ * There is no real payment gateway: exactly two outcomes exist,
+ * paymentOutcome "SUCCESS" (order placed, coupon redeemed, stock reserved)
+ * and "FAILED" (a full no-op — nothing is written except idempotency
+ * bookkeeping). Customer identity comes from the authenticated user, never
+ * from the request body, so there is no separate checkout form to fill in —
+ * both outcome buttons are clickable immediately.
  */
-async function checkout(userId, payload) {
+async function checkout(user, payload) {
+  const userId = user.id;
   const { paymentOutcome, idempotencyKey } = payload;
   if (paymentOutcome !== "SUCCESS" && paymentOutcome !== "FAILED") {
     throw new AppError(422, "VALIDATION_ERROR", "A payment outcome must be provided.");
   }
-  validateCustomerInfo(payload);
 
   const claim = await claimIdempotencyKey(idempotencyKey, userId);
   if (!claim.claimed) {
@@ -179,9 +172,9 @@ async function checkout(userId, payload) {
           discount: pricing.discount.toFixed(2),
           total: pricing.total.toFixed(2),
           couponCode: promotionEval ? promotionEval.promotion.code : null,
-          customerName: payload.customerName.trim(),
-          customerEmail: payload.customerEmail.trim().toLowerCase(),
-          customerAddress: payload.customerAddress.trim(),
+          customerName: user.name,
+          customerEmail: user.email,
+          customerAddress: (payload.customerAddress || "").trim(),
           status: "COMPLETED",
           paymentStatus: "SUCCESS",
           items: {

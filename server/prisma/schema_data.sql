@@ -1,6 +1,8 @@
 --
 -- PostgreSQL database dump
 --
+
+
 -- Full dump (schema + data) of the PromoStore database, as an alternative to
 -- schema.sql + npm run seed. Use this to clone the exact current dev database
 -- (categories, products, promotions, the admin account, and any orders placed
@@ -10,7 +12,6 @@
 -- Note: user password hashes come along as-is (bcrypt hashes, not plaintext),
 -- so seeded/existing accounts keep working; anyone who signed up locally can
 -- still log in with their original password on the new database.
-
 -- Dumped from database version 18.4
 -- Dumped by pg_dump version 18.4
 
@@ -283,9 +284,9 @@ CREATE TABLE public.users (
 --
 
 COPY public.cart_items (id, cart_id, product_id, quantity, created_at, updated_at) FROM stdin;
-100e2ce6-6542-4954-925f-84aef6c7863e	76323d43-4af2-4eea-93c3-9be80ca3c506	44040a25-92c6-437a-a4c6-3f37b1948b83	1	2026-09-16 19:35:58.286	2026-09-16 19:35:58.286
-08958163-1897-4130-956e-3b57868cfa64	76323d43-4af2-4eea-93c3-9be80ca3c506	6b71126e-db7a-4e87-a2c4-fe59a13a7967	1	2026-09-16 19:36:00.081	2026-09-16 19:36:00.081
-7ce6508a-962b-4288-a5cc-fdd2122f78a4	76323d43-4af2-4eea-93c3-9be80ca3c506	f5d52fbd-6a74-49e1-b351-9811e3c2eaf6	2	2026-09-16 19:36:12.401	2026-09-16 19:46:19.714
+ec7a89e8-6d3d-489e-ba3e-a3f9537dadb8	31425d91-f3fe-49b0-9698-063381ae288d	903f5e0d-877b-47a2-881a-bd05e55f41b9	1	2026-09-16 20:29:25.287	2026-09-16 20:29:25.287
+af4f01ed-cc3b-4070-816f-d66404da1205	09b2b8ec-30f6-46d4-947b-d9fe318f104f	903f5e0d-877b-47a2-881a-bd05e55f41b9	1	2026-09-16 20:30:16.649	2026-09-16 20:30:16.649
+a5e163ff-a0ae-4d77-af3a-7a213112fe15	8b441bf2-accf-4e85-8b3d-4bbd8df55216	903f5e0d-877b-47a2-881a-bd05e55f41b9	1	2026-09-16 20:31:40.891	2026-09-16 20:31:40.891
 \.
 
 
@@ -294,8 +295,10 @@ COPY public.cart_items (id, cart_id, product_id, quantity, created_at, updated_a
 --
 
 COPY public.carts (id, user_id, coupon_code, created_at, updated_at) FROM stdin;
-840a50c1-922a-4a06-9b77-4b5b30f2d45b	985770ce-5d92-45f0-9c27-4b06850dac7a	\N	2026-09-16 19:23:18.029	2026-09-16 19:23:18.029
-76323d43-4af2-4eea-93c3-9be80ca3c506	48bd6d3d-addf-4d70-a29f-5de09201c273	\N	2026-09-16 19:35:52.807	2026-09-16 19:36:47.878
+ea249ddb-e659-49e9-a719-7c6883ca01f5	d93ae503-07af-4edf-8ce2-ee6ca43e7047	\N	2026-09-16 20:28:58.83	2026-09-16 20:28:58.83
+31425d91-f3fe-49b0-9698-063381ae288d	a4d9c8e9-3495-44bd-afa2-2959c3911010	\N	2026-09-16 20:29:25.155	2026-09-16 20:29:25.155
+09b2b8ec-30f6-46d4-947b-d9fe318f104f	37c5ea36-f499-4489-86ee-56453514ad8d	SAVE20	2026-09-16 20:30:16.558	2026-09-16 20:30:18.773
+8b441bf2-accf-4e85-8b3d-4bbd8df55216	fd5498b3-5ec8-4e8c-83fc-996c8c4bec47	\N	2026-09-16 20:31:40.807	2026-09-16 20:31:40.807
 \.
 
 
@@ -304,11 +307,11 @@ COPY public.carts (id, user_id, coupon_code, created_at, updated_at) FROM stdin;
 --
 
 COPY public.categories (id, name, slug, active, created_at, updated_at) FROM stdin;
-b63d99cb-52a1-434e-81df-6a4e7de2c283	Electronics	electronics	t	2026-09-16 19:23:17.603	2026-09-16 19:23:17.603
-2b3204a6-ac4e-4c7c-becc-a6a7e4d6cec4	Fashion	fashion	t	2026-09-16 19:23:17.623	2026-09-16 19:23:17.623
-0dd64cba-6a84-44fc-9fdd-b2a5ecac31ef	Home	home	t	2026-09-16 19:23:17.626	2026-09-16 19:23:17.626
-ae54353e-e69f-4aa8-a4b9-28f9f02583bd	Beauty	beauty	t	2026-09-16 19:23:17.628	2026-09-16 19:23:17.628
-7dee458d-03d3-4e8a-b668-aa85de72aa2e	Grocery	grocery	t	2026-09-16 19:23:17.631	2026-09-16 19:23:17.631
+fe7abd4c-2524-40b3-a96f-f7dbde1b76f1	Electronics	electronics	t	2026-09-16 20:28:58.732	2026-09-16 20:28:58.732
+272b3d19-adaa-46bd-b206-d5f865a5fb6a	Fashion	fashion	t	2026-09-16 20:28:58.736	2026-09-16 20:28:58.736
+b8dfde3b-8ed7-48cb-a2f1-58d4c8f4e0e5	Home	home	t	2026-09-16 20:28:58.737	2026-09-16 20:28:58.737
+5aa3272c-e9f0-4ebb-9da3-f69355f5e18d	Beauty	beauty	t	2026-09-16 20:28:58.737	2026-09-16 20:28:58.737
+e7493b47-28e0-488f-b3c0-114112736882	Grocery	grocery	t	2026-09-16 20:28:58.738	2026-09-16 20:28:58.738
 \.
 
 
@@ -341,26 +344,26 @@ COPY public.orders (id, user_id, subtotal, discount, total, coupon_code, custome
 --
 
 COPY public.products (id, name, description, price, image, category_id, stock, sku, active, created_at, updated_at) FROM stdin;
-f5fc839f-5266-4d0a-a5bd-f61ef84c046b	Wireless Optical Mouse	Ergonomic 2.4GHz wireless mouse with adjustable DPI.	699.00	https://picsum.photos/seed/elec1/600/600	b63d99cb-52a1-434e-81df-6a4e7de2c283	60	ELEC-001	t	2026-09-16 19:23:17.636	2026-09-16 19:23:17.636
-f5e41ffd-4945-45bc-973e-df69c99572d4	Mechanical Keyboard	RGB backlit mechanical keyboard with blue switches.	2499.00	https://picsum.photos/seed/elec2/600/600	b63d99cb-52a1-434e-81df-6a4e7de2c283	25	ELEC-002	t	2026-09-16 19:23:17.647	2026-09-16 19:23:17.647
-dcb1855c-5646-4e87-9386-e42a5d067ed2	Bluetooth Headphones	Over-ear wireless headphones with 30-hour battery life.	3499.00	https://picsum.photos/seed/elec3/600/600	b63d99cb-52a1-434e-81df-6a4e7de2c283	40	ELEC-003	t	2026-09-16 19:23:17.658	2026-09-16 19:23:17.658
-3b031205-1cdd-4002-a3e8-93cb0aedeb27	27-inch 4K Monitor	Ultra HD IPS monitor with HDR support.	24999.00	https://picsum.photos/seed/elec4/600/600	b63d99cb-52a1-434e-81df-6a4e7de2c283	12	ELEC-004	t	2026-09-16 19:23:17.664	2026-09-16 19:23:17.664
-257ceb50-6393-4400-a476-6ac29f7c50e1	Smartphone 128GB	6.5-inch AMOLED display, triple camera, 128GB storage.	18999.00	https://picsum.photos/seed/elec5/600/600	b63d99cb-52a1-434e-81df-6a4e7de2c283	18	ELEC-005	t	2026-09-16 19:23:17.668	2026-09-16 19:23:17.668
-6b71126e-db7a-4e87-a2c4-fe59a13a7967	Portable Power Bank 20000mAh	Fast-charging power bank with dual USB output.	1499.00	https://picsum.photos/seed/elec6/600/600	b63d99cb-52a1-434e-81df-6a4e7de2c283	50	ELEC-006	t	2026-09-16 19:23:17.672	2026-09-16 19:23:17.672
-44040a25-92c6-437a-a4c6-3f37b1948b83	Men's Cotton T-Shirt	Breathable 100% cotton crew neck t-shirt.	799.00	https://picsum.photos/seed/fash1/600/600	2b3204a6-ac4e-4c7c-becc-a6a7e4d6cec4	100	FASH-001	t	2026-09-16 19:23:17.675	2026-09-16 19:23:17.675
-dd3fcd29-4019-4267-a141-8654cb290b89	Women's Denim Jacket	Classic fit denim jacket with button closure.	2199.00	https://picsum.photos/seed/fash2/600/600	2b3204a6-ac4e-4c7c-becc-a6a7e4d6cec4	35	FASH-002	t	2026-09-16 19:23:17.679	2026-09-16 19:23:17.679
-c34f4c0b-4048-40fb-9ef4-f29c2beea996	Running Shoes	Lightweight cushioned running shoes.	3199.00	https://picsum.photos/seed/fash3/600/600	2b3204a6-ac4e-4c7c-becc-a6a7e4d6cec4	45	FASH-003	t	2026-09-16 19:23:17.682	2026-09-16 19:23:17.682
-3bff64d0-0435-4215-be37-f167bcd93ccf	Leather Wallet	Genuine leather bifold wallet with card slots.	999.00	https://picsum.photos/seed/fash4/600/600	2b3204a6-ac4e-4c7c-becc-a6a7e4d6cec4	70	FASH-004	t	2026-09-16 19:23:17.685	2026-09-16 19:23:17.685
-4d6370fd-8cfc-47c4-9f9c-b34836b675b6	Non-stick Cookware Set	5-piece non-stick cookware set with lids.	3499.00	https://picsum.photos/seed/home1/600/600	0dd64cba-6a84-44fc-9fdd-b2a5ecac31ef	20	HOME-001	t	2026-09-16 19:23:17.689	2026-09-16 19:23:17.689
-50d194cc-692d-46db-889f-a90c44c5a801	LED Desk Lamp	Adjustable brightness LED desk lamp with USB port.	899.00	https://picsum.photos/seed/home2/600/600	0dd64cba-6a84-44fc-9fdd-b2a5ecac31ef	55	HOME-002	t	2026-09-16 19:23:17.692	2026-09-16 19:23:17.692
-772ba656-7328-4881-a7b8-f58c0df7a702	Cotton Bedsheet Set	King-size cotton bedsheet with two pillow covers.	1299.00	https://picsum.photos/seed/home3/600/600	0dd64cba-6a84-44fc-9fdd-b2a5ecac31ef	40	HOME-003	t	2026-09-16 19:23:17.695	2026-09-16 19:23:17.695
-ca526719-7973-4684-8d93-d2a23d77c5d3	Ceramic Dinner Set	16-piece ceramic dinner set for 4.	2799.00	https://picsum.photos/seed/home4/600/600	0dd64cba-6a84-44fc-9fdd-b2a5ecac31ef	15	HOME-004	t	2026-09-16 19:23:17.698	2026-09-16 19:23:17.698
-ea617f13-87bb-43b2-9623-2fb097b3b41f	Face Moisturizer 100ml	Lightweight daily moisturizer for all skin types.	499.00	https://picsum.photos/seed/beau1/600/600	ae54353e-e69f-4aa8-a4b9-28f9f02583bd	80	BEAU-001	t	2026-09-16 19:23:17.7	2026-09-16 19:23:17.7
-a3b4f710-782d-4b38-b880-1854e298707f	Herbal Shampoo 340ml	Sulfate-free herbal shampoo for daily use.	349.00	https://picsum.photos/seed/beau2/600/600	ae54353e-e69f-4aa8-a4b9-28f9f02583bd	90	BEAU-002	t	2026-09-16 19:23:17.703	2026-09-16 19:23:17.703
-8e093853-92d0-45e7-a226-91623100f6bc	Matte Lipstick	Long-lasting matte finish lipstick.	599.00	https://picsum.photos/seed/beau3/600/600	ae54353e-e69f-4aa8-a4b9-28f9f02583bd	65	BEAU-003	t	2026-09-16 19:23:17.708	2026-09-16 19:23:17.708
-634b32ec-4fdf-4288-a8db-92a150eea967	Organic Basmati Rice 5kg	Premium aged organic basmati rice.	649.00	https://picsum.photos/seed/groc1/600/600	7dee458d-03d3-4e8a-b668-aa85de72aa2e	30	GROC-001	t	2026-09-16 19:23:17.713	2026-09-16 19:23:17.713
-1b962439-054d-4999-9f72-9a75cee1b68d	Cold Pressed Olive Oil 1L	Extra virgin cold pressed olive oil.	899.00	https://picsum.photos/seed/groc2/600/600	7dee458d-03d3-4e8a-b668-aa85de72aa2e	25	GROC-002	t	2026-09-16 19:23:17.716	2026-09-16 19:23:17.716
-f5d52fbd-6a74-49e1-b351-9811e3c2eaf6	Assorted Dry Fruits Pack 1kg	Premium mix of almonds, cashews and raisins.	1099.00	https://picsum.photos/seed/groc3/600/600	7dee458d-03d3-4e8a-b668-aa85de72aa2e	20	GROC-003	t	2026-09-16 19:23:17.722	2026-09-16 19:23:17.722
+dcbee50e-bc89-4dc9-85e5-5f01a83604a7	Wireless Optical Mouse	Ergonomic 2.4GHz wireless mouse with adjustable DPI.	35.00	https://picsum.photos/seed/elec1/600/600	fe7abd4c-2524-40b3-a96f-f7dbde1b76f1	60	ELEC-001	t	2026-09-16 20:28:58.739	2026-09-16 20:28:58.739
+aef95862-ea09-46dd-b73f-6bb628c5d28a	Mechanical Keyboard	RGB backlit mechanical keyboard with blue switches.	120.00	https://picsum.photos/seed/elec2/600/600	fe7abd4c-2524-40b3-a96f-f7dbde1b76f1	25	ELEC-002	t	2026-09-16 20:28:58.744	2026-09-16 20:28:58.744
+67ab0332-65f8-4081-9d97-92d0bd4fdef0	Bluetooth Headphones	Over-ear wireless headphones with 30-hour battery life.	160.00	https://picsum.photos/seed/elec3/600/600	fe7abd4c-2524-40b3-a96f-f7dbde1b76f1	40	ELEC-003	t	2026-09-16 20:28:58.745	2026-09-16 20:28:58.745
+f6031c2f-b39a-4d40-9645-6af82044b9fe	27-inch 4K Monitor	Ultra HD IPS monitor with HDR support.	1100.00	https://picsum.photos/seed/elec4/600/600	fe7abd4c-2524-40b3-a96f-f7dbde1b76f1	12	ELEC-004	t	2026-09-16 20:28:58.746	2026-09-16 20:28:58.746
+8f937cbe-4fe3-4504-8ae9-229f4b281092	Smartphone 128GB	6.5-inch AMOLED display, triple camera, 128GB storage.	850.00	https://picsum.photos/seed/elec5/600/600	fe7abd4c-2524-40b3-a96f-f7dbde1b76f1	18	ELEC-005	t	2026-09-16 20:28:58.747	2026-09-16 20:28:58.747
+4a409812-82de-457b-a667-07614f1f561c	Portable Power Bank 20000mAh	Fast-charging power bank with dual USB output.	70.00	https://picsum.photos/seed/elec6/600/600	fe7abd4c-2524-40b3-a96f-f7dbde1b76f1	50	ELEC-006	t	2026-09-16 20:28:58.747	2026-09-16 20:28:58.747
+4189b2d0-998e-4a8d-91ec-c92dd754241f	Men's Cotton T-Shirt	Breathable 100% cotton crew neck t-shirt.	40.00	https://picsum.photos/seed/fash1/600/600	272b3d19-adaa-46bd-b206-d5f865a5fb6a	100	FASH-001	t	2026-09-16 20:28:58.748	2026-09-16 20:28:58.748
+87012b61-328b-4222-9e4b-66b4d58a58f9	Women's Denim Jacket	Classic fit denim jacket with button closure.	110.00	https://picsum.photos/seed/fash2/600/600	272b3d19-adaa-46bd-b206-d5f865a5fb6a	35	FASH-002	t	2026-09-16 20:28:58.749	2026-09-16 20:28:58.749
+424c7c6b-7b27-415f-8659-463a5a17279c	Running Shoes	Lightweight cushioned running shoes.	150.00	https://picsum.photos/seed/fash3/600/600	272b3d19-adaa-46bd-b206-d5f865a5fb6a	45	FASH-003	t	2026-09-16 20:28:58.749	2026-09-16 20:28:58.749
+badbe8b2-3036-467a-8503-0b979789f918	Leather Wallet	Genuine leather bifold wallet with card slots.	50.00	https://picsum.photos/seed/fash4/600/600	272b3d19-adaa-46bd-b206-d5f865a5fb6a	70	FASH-004	t	2026-09-16 20:28:58.75	2026-09-16 20:28:58.75
+60e41ae0-e5e0-42fb-8437-77ea1fe7fa17	Non-stick Cookware Set	5-piece non-stick cookware set with lids.	160.00	https://picsum.photos/seed/home1/600/600	b8dfde3b-8ed7-48cb-a2f1-58d4c8f4e0e5	20	HOME-001	t	2026-09-16 20:28:58.751	2026-09-16 20:28:58.751
+7b42f485-14bf-49b3-b211-12677f22db10	LED Desk Lamp	Adjustable brightness LED desk lamp with USB port.	45.00	https://picsum.photos/seed/home2/600/600	b8dfde3b-8ed7-48cb-a2f1-58d4c8f4e0e5	55	HOME-002	t	2026-09-16 20:28:58.751	2026-09-16 20:28:58.751
+2737903f-79bf-436f-a671-fdacd4041f77	Cotton Bedsheet Set	King-size cotton bedsheet with two pillow covers.	65.00	https://picsum.photos/seed/home3/600/600	b8dfde3b-8ed7-48cb-a2f1-58d4c8f4e0e5	40	HOME-003	t	2026-09-16 20:28:58.752	2026-09-16 20:28:58.752
+8124728c-9f26-4c4c-b826-419f51cfe3e1	Ceramic Dinner Set	16-piece ceramic dinner set for 4.	130.00	https://picsum.photos/seed/home4/600/600	b8dfde3b-8ed7-48cb-a2f1-58d4c8f4e0e5	15	HOME-004	t	2026-09-16 20:28:58.752	2026-09-16 20:28:58.752
+c992fdbb-aa95-4989-a723-8e0faedec402	Face Moisturizer 100ml	Lightweight daily moisturizer for all skin types.	25.00	https://picsum.photos/seed/beau1/600/600	5aa3272c-e9f0-4ebb-9da3-f69355f5e18d	80	BEAU-001	t	2026-09-16 20:28:58.753	2026-09-16 20:28:58.753
+4c679ceb-2962-4dc3-a36d-d011c3ef549d	Herbal Shampoo 340ml	Sulfate-free herbal shampoo for daily use.	18.00	https://picsum.photos/seed/beau2/600/600	5aa3272c-e9f0-4ebb-9da3-f69355f5e18d	90	BEAU-002	t	2026-09-16 20:28:58.754	2026-09-16 20:28:58.754
+225a8e7b-7f7e-4cf7-bc8d-f3e3b6699840	Matte Lipstick	Long-lasting matte finish lipstick.	30.00	https://picsum.photos/seed/beau3/600/600	5aa3272c-e9f0-4ebb-9da3-f69355f5e18d	65	BEAU-003	t	2026-09-16 20:28:58.754	2026-09-16 20:28:58.754
+77a84390-d2e3-4970-b706-67e2a7b63a31	Organic Basmati Rice 5kg	Premium aged organic basmati rice.	32.00	https://picsum.photos/seed/groc1/600/600	e7493b47-28e0-488f-b3c0-114112736882	30	GROC-001	t	2026-09-16 20:28:58.755	2026-09-16 20:28:58.755
+89f9ba82-99f1-42ae-885e-f5fec11e8fa3	Cold Pressed Olive Oil 1L	Extra virgin cold pressed olive oil.	45.00	https://picsum.photos/seed/groc2/600/600	e7493b47-28e0-488f-b3c0-114112736882	25	GROC-002	t	2026-09-16 20:28:58.756	2026-09-16 20:28:58.756
+903f5e0d-877b-47a2-881a-bd05e55f41b9	Assorted Dry Fruits Pack 1kg	Premium mix of almonds, cashews and raisins.	55.00	https://picsum.photos/seed/groc3/600/600	e7493b47-28e0-488f-b3c0-114112736882	20	GROC-003	t	2026-09-16 20:28:58.757	2026-09-16 20:28:58.757
 \.
 
 
@@ -369,7 +372,7 @@ f5d52fbd-6a74-49e1-b351-9811e3c2eaf6	Assorted Dry Fruits Pack 1kg	Premium mix of
 --
 
 COPY public.promotion_categories (id, promotion_id, category_id) FROM stdin;
-b696af71-08ec-445c-8911-bb5a0946bdfa	3359e66d-d467-4237-bc91-8850325b14cf	b63d99cb-52a1-434e-81df-6a4e7de2c283
+3b598797-7e02-405c-bc23-016ca339c369	b5893a08-d378-4749-86b3-eab0aa1ce3c5	fe7abd4c-2524-40b3-a96f-f7dbde1b76f1
 \.
 
 
@@ -378,10 +381,10 @@ b696af71-08ec-445c-8911-bb5a0946bdfa	3359e66d-d467-4237-bc91-8850325b14cf	b63d99
 --
 
 COPY public.promotions (id, code, name, discount_type, discount_value, maximum_discount, minimum_order_value, applies_to_all_categories, status, start_at, end_at, total_usage_limit, per_user_usage_limit, current_usage, created_at, updated_at) FROM stdin;
-b33d56f1-b8a7-474a-bde8-6425e805f146	SAVE20	Save 20% Sitewide	PERCENTAGE	20.00	500.00	300.00	t	ACTIVE	2026-08-16 19:23:17.728	2026-10-16 19:23:17.728	100	1	0	2026-09-16 19:23:17.734	2026-09-16 19:23:17.734
-3359e66d-d467-4237-bc91-8850325b14cf	TECH20	20% Off Electronics	PERCENTAGE	20.00	1000.00	1000.00	f	ACTIVE	2026-08-16 19:23:17.728	2026-10-16 19:23:17.728	50	1	0	2026-09-16 19:23:17.747	2026-09-16 19:23:17.747
-2eeab49f-b8b7-4edd-a972-deabda858de9	FLAT100	Flat ₹100 Off	FLAT	100.00	\N	1000.00	t	ACTIVE	2026-08-16 19:23:17.728	2026-10-16 19:23:17.728	100	\N	0	2026-09-16 19:23:17.761	2026-09-16 19:23:17.761
-bd76e16c-08ae-4211-bab9-6131c852808f	EXPIRED20	Expired 20% Promo	PERCENTAGE	20.00	500.00	0.00	t	ACTIVE	2026-07-16 19:23:17.728	2026-09-09 19:23:17.728	\N	\N	0	2026-09-16 19:23:17.766	2026-09-16 19:23:17.766
+3b67b604-849e-4a0d-9480-26962f8531a2	SAVE20	Save 20% Sitewide	PERCENTAGE	20.00	75.00	50.00	t	ACTIVE	2026-08-16 20:28:58.754	2026-10-16 20:28:58.754	100	1	0	2026-09-16 20:28:58.758	2026-09-16 20:28:58.758
+b5893a08-d378-4749-86b3-eab0aa1ce3c5	TECH20	20% Off Electronics	PERCENTAGE	20.00	150.00	150.00	f	ACTIVE	2026-08-16 20:28:58.754	2026-10-16 20:28:58.754	50	1	0	2026-09-16 20:28:58.762	2026-09-16 20:28:58.762
+85318047-9d1a-4374-8590-20fae96fda8b	FLAT15	Flat AED 15 Off	FLAT	15.00	\N	150.00	t	ACTIVE	2026-08-16 20:28:58.754	2026-10-16 20:28:58.754	100	\N	0	2026-09-16 20:28:58.766	2026-09-16 20:28:58.766
+4fe32f15-6bb9-4255-ae1b-ba240c4fc44f	EXPIRED20	Expired 20% Promo	PERCENTAGE	20.00	75.00	0.00	t	ACTIVE	2026-07-16 20:28:58.754	2026-09-09 20:28:58.754	\N	\N	0	2026-09-16 20:28:58.767	2026-09-16 20:28:58.767
 \.
 
 
@@ -398,8 +401,10 @@ COPY public.redemptions (id, promotion_id, user_id, order_id, coupon_code, disco
 --
 
 COPY public.users (id, name, email, password_hash, role, created_at, updated_at) FROM stdin;
-985770ce-5d92-45f0-9c27-4b06850dac7a	Store Admin	admin@promo.test	$2a$10$jVg5v7ifQpJyp8KtGrjbKuI2tVcPLcCXESEQDMIYtbn6l.EBQjAom	ADMIN	2026-09-16 19:23:18.018	2026-09-16 19:23:18.018
-48bd6d3d-addf-4d70-a29f-5de09201c273	User1234	user1234@gmail.com	$2a$10$PotuRDVvc9DiYYyxZFZ7u.0VlXTpTwR9gQDHzsysQSl86hYeApQFS	USER	2026-09-16 19:35:52.791	2026-09-16 19:35:52.791
+d93ae503-07af-4edf-8ce2-ee6ca43e7047	Store Admin	admin@promo.test	$2a$10$UDvMJV461SpcYatfpp5o5eyfif44T8slqZnJvZciOnEnbVOwO8.Hi	ADMIN	2026-09-16 20:28:58.827	2026-09-16 20:28:58.827
+a4d9c8e9-3495-44bd-afa2-2959c3911010	Verify AED User	verifyaed1789590564877@test.com	$2a$10$oJRU3GgzFYa5LxpmXje8fuY1bFx21s8C6q7Zy5Hm3/AcIIe3IHdvi	USER	2026-09-16 20:29:25.154	2026-09-16 20:29:25.154
+37c5ea36-f499-4489-86ee-56453514ad8d	Verify AED User	verifyaed1789590616273@test.com	$2a$10$vjUsDVKWiHgYcPwyXUylLeq4aRtr9WwnDvxJnP6mtQbqFCXRTpaam	USER	2026-09-16 20:30:16.555	2026-09-16 20:30:16.555
+fd5498b3-5ec8-4e8c-83fc-996c8c4bec47	Badge Test User	badgetest1789590700581@test.com	$2a$10$23ip9W65ZCUnna3BkaGJMOLXgITSyqBC4MT6YUEqMrorjE6Ry8QVa	USER	2026-09-16 20:31:40.806	2026-09-16 20:31:40.806
 \.
 
 
@@ -681,4 +686,5 @@ ALTER TABLE ONLY public.redemptions
 --
 -- PostgreSQL database dump complete
 --
+
 

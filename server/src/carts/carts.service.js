@@ -174,6 +174,12 @@ async function getCart(cartId, userId) {
   return serializeCart(cart, pricingResponse);
 }
 
+async function listAvailableCoupons(cartId, userId) {
+  const cart = await loadOwnedCart(cartId, userId);
+  const lineItems = buildLineItems(cart);
+  return promotionsService.listAvailablePromotionsWithEligibility({ lineItems, userId, now: new Date() });
+}
+
 module.exports = {
   getOrCreateCart,
   loadOwnedCart,
@@ -185,4 +191,5 @@ module.exports = {
   removeCoupon,
   getCart,
   computePricing,
+  listAvailableCoupons,
 };

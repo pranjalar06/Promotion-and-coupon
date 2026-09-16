@@ -176,4 +176,41 @@ describe("Checkout and transactional redemption", () => {
     const redemptionCount = await prisma.redemption.count({ where: { promotionId: promo.id } });
     expect(redemptionCount).toBe(1);
   });
+
+  test("checkout succeeds with no customer fields in the body at all — no form is required", async () => {
+    const category = await createCategory();
+    const product = await createProduct(category.id, { price: "500.00" });
+    const { token } = await signup({ name: "Form Free User", email: "formfree@test.com" });
+    await addToCart(token, product.id, 1);
+
+    const res = await request(app)
+      .post("/api/v1/orders/checkout")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ paymentOutcome: "SUCCESS", idempotencyKey: "no-form-key" });
+
+    expect(res.status).toBe(201);
+    expect(res.body.order.customer.name).toBe("Form Free User");
+    expect(res.body.order.customer.email).toBe("formfree@test.com");
+  });
+
+  test("customer identity on the order always comes from the authenticated account, never client input", async () => {
+    const category = await createCategory();
+    const product = await createProduct(category.id, { price: "500.00" });
+    const { token } = await signup({ name: "Real Name", email: "realuser@test.com" });
+    await addToCart(token, product.id, 1);
+
+    const res = await request(app)
+      .post("/api/v1/orders/checkout")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        customerName: "Spoofed Name",
+        customerEmail: "spoofed@evil.com",
+        paymentOutcome: "SUCCESS",
+        idempotencyKey: "no-spoof-key",
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body.order.customer.name).toBe("Real Name");
+    expect(res.body.order.customer.email).toBe("realuser@test.com");
+  });
 });

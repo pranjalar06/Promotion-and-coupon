@@ -52,10 +52,12 @@ export default function OrderDetailPage() {
             <p className="text-gray-500">Email</p>
             <p className="font-medium text-gray-900">{order.customer.email}</p>
           </div>
-          <div>
-            <p className="text-gray-500">Address</p>
-            <p className="font-medium text-gray-900">{order.customer.address}</p>
-          </div>
+          {order.customer.address && (
+            <div>
+              <p className="text-gray-500">Address</p>
+              <p className="font-medium text-gray-900">{order.customer.address}</p>
+            </div>
+          )}
         </div>
 
         <div className="mt-6 overflow-x-auto">

@@ -143,7 +143,7 @@ export default function PromotionForm({ initial, categories, onSubmit, submitLab
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Discount Value {form.discountType === "PERCENTAGE" ? "(%)" : "(₹)"}
+            Discount Value {form.discountType === "PERCENTAGE" ? "(%)" : "(AED)"}
           </label>
           <input
             type="number"
@@ -155,7 +155,7 @@ export default function PromotionForm({ initial, categories, onSubmit, submitLab
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Maximum Discount (₹, optional)</label>
+          <label className="block text-sm font-medium text-gray-700">Maximum Discount (AED, optional)</label>
           <input
             type="number"
             step="0.01"
@@ -165,7 +165,7 @@ export default function PromotionForm({ initial, categories, onSubmit, submitLab
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Minimum Order Value (₹)</label>
+          <label className="block text-sm font-medium text-gray-700">Minimum Order Value (AED)</label>
           <input
             type="number"
             step="0.01"

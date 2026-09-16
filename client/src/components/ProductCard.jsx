@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { formatMoney } from "../utils/format";
 
-export default function ProductCard({ product, onAddToCart, adding }) {
+export default function ProductCard({ product, onAddToCart, adding, justAdded }) {
   return (
     <div className="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
       <Link to={`/products/${product.id}`} className="block aspect-square overflow-hidden bg-gray-100">
@@ -28,9 +28,11 @@ export default function ProductCard({ product, onAddToCart, adding }) {
         <button
           onClick={() => onAddToCart(product)}
           disabled={!product.inStock || adding}
-          className="mt-3 w-full rounded-md bg-brand-600 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+          className={`mt-3 w-full rounded-md py-2 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed ${
+            justAdded ? "bg-green-600 hover:bg-green-600" : "bg-brand-600 hover:bg-brand-700 disabled:bg-gray-300"
+          }`}
         >
-          {adding ? "Adding..." : "Add to Cart"}
+          {justAdded ? "Added ✓" : adding ? "Adding..." : "Add to Cart"}
         </button>
       </div>
     </div>

@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
+import { Link, Navigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import api from "../../services/api";
 import { formatMoney } from "../../utils/format";
@@ -12,36 +11,27 @@ function newIdempotencyKey() {
   return `key-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
+// No real payment gateway: this page offers exactly two outcomes.
+// "SUCCESS" -> the coupon (if any) is redeemed, stock is reserved, the order
+// is created, and the cart is cleared. "FAILED" -> a full rollback / no-op:
+// nothing is written, the coupon stays unused, the cart is untouched.
 export default function CheckoutPage() {
-  const { user } = useAuth();
   const { cart, loading, refresh } = useCart();
-  const navigate = useNavigate();
 
-  const [form, setForm] = useState({ name: user?.name || "", email: user?.email || "", address: "" });
   const [idempotencyKey, setIdempotencyKey] = useState(newIdempotencyKey);
   const [processing, setProcessing] = useState(null); // "SUCCESS" | "FAILED" | null
   const [submitError, setSubmitError] = useState(null);
-  const [view, setView] = useState("form"); // "form" | "failed" | "success"
+  const [view, setView] = useState("confirm"); // "confirm" | "failed" | "success"
   const [completedOrder, setCompletedOrder] = useState(null);
 
-  useEffect(() => {
-    setForm((f) => ({ ...f, name: user?.name || f.name, email: user?.email || f.email }));
-  }, [user]);
-
   if (loading && !cart) return <Spinner label="Loading checkout..." />;
-  if (view === "form" && cart && cart.items.length === 0) return <Navigate to="/cart" replace />;
+  if (view === "confirm" && cart && cart.items.length === 0) return <Navigate to="/cart" replace />;
 
   async function submitCheckout(paymentOutcome) {
     setProcessing(paymentOutcome);
     setSubmitError(null);
     try {
-      const result = await api.post("/orders/checkout", {
-        customerName: form.name,
-        customerEmail: form.email,
-        customerAddress: form.address,
-        paymentOutcome,
-        idempotencyKey,
-      });
+      const result = await api.post("/orders/checkout", { paymentOutcome, idempotencyKey });
 
       if (result.paymentStatus === "FAILED") {
         setView("failed");
@@ -58,10 +48,6 @@ export default function CheckoutPage() {
     }
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-  }
-
   if (view === "failed") {
     return (
       <div className="mx-auto max-w-md rounded-xl border border-red-200 bg-white p-8 text-center shadow-sm">
@@ -69,10 +55,10 @@ export default function CheckoutPage() {
           !
         </div>
         <h1 className="text-lg font-bold text-gray-900">Payment Failed</h1>
-        <p className="mt-2 text-sm text-gray-600">Your payment was not completed.</p>
+        <p className="mt-2 text-sm text-gray-600">Nothing was charged or redeemed.</p>
         <p className="mt-1 text-sm text-gray-600">Your cart has been preserved.</p>
         <button
-          onClick={() => setView("form")}
+          onClick={() => setView("confirm")}
           className="mt-6 w-full rounded-md bg-brand-600 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
         >
           Return to Cart
@@ -112,61 +98,28 @@ export default function CheckoutPage() {
       <h1 className="mb-6 text-2xl font-bold text-gray-900">Checkout</h1>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="rounded-xl border border-gray-200 bg-white p-5 lg:col-span-2">
-          <h2 className="text-sm font-semibold text-gray-900">Customer Information</h2>
-          <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Name</label>
-              <input
-                required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
-              <input
-                type="email"
-                required
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Address</label>
-              <textarea
-                required
-                rows={3}
-                value={form.address}
-                onChange={(e) => setForm({ ...form, address: e.target.value })}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-              />
-            </div>
-          </form>
-
-          <div className="mt-6 border-t border-gray-100 pt-4">
-            <h2 className="text-sm font-semibold text-gray-900">Payment Simulation</h2>
-            <p className="mt-1 text-xs text-gray-500">No real payment information is required.</p>
-            <ErrorBanner message={submitError} />
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={() => submitCheckout("FAILED")}
-                disabled={Boolean(processing) || !form.name || !form.email || !form.address}
-                className="flex-1 rounded-md border border-red-300 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-60"
-              >
-                {processing === "FAILED" ? "Processing..." : "Payment Failed"}
-              </button>
-              <button
-                type="button"
-                onClick={() => submitCheckout("SUCCESS")}
-                disabled={Boolean(processing) || !form.name || !form.email || !form.address}
-                className="flex-1 rounded-md bg-brand-600 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
-              >
-                {processing === "SUCCESS" ? "Processing..." : "Pay & Place Order"}
-              </button>
-            </div>
+          <h2 className="text-sm font-semibold text-gray-900">Confirm Your Order</h2>
+          <p className="mt-1 text-xs text-gray-500">
+            Choose an outcome below — this is a simulation, no payment details are collected.
+          </p>
+          <ErrorBanner message={submitError} />
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => submitCheckout("FAILED")}
+              disabled={Boolean(processing)}
+              className="flex-1 rounded-md border border-red-300 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-60"
+            >
+              {processing === "FAILED" ? "Rolling back..." : "Payment Failed"}
+            </button>
+            <button
+              type="button"
+              onClick={() => submitCheckout("SUCCESS")}
+              disabled={Boolean(processing)}
+              className="flex-1 rounded-md bg-brand-600 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
+            >
+              {processing === "SUCCESS" ? "Placing order..." : "Pay & Place Order"}
+            </button>
           </div>
         </div>
 

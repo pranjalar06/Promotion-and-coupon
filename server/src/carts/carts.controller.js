@@ -45,4 +45,19 @@ const removeCoupon = asyncHandler(async (req, res) => {
   res.json(pricing);
 });
 
-module.exports = { getMyCart, getCart, addItem, updateItem, removeItem, getPricing, applyCoupon, removeCoupon };
+const listAvailableCoupons = asyncHandler(async (req, res) => {
+  const promotions = await cartsService.listAvailableCoupons(req.params.id, req.user.id);
+  res.json({ promotions });
+});
+
+module.exports = {
+  getMyCart,
+  getCart,
+  addItem,
+  updateItem,
+  removeItem,
+  getPricing,
+  applyCoupon,
+  removeCoupon,
+  listAvailableCoupons,
+};

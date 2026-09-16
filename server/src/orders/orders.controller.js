@@ -2,7 +2,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const ordersService = require("./orders.service");
 
 const checkout = asyncHandler(async (req, res) => {
-  const result = await ordersService.checkout(req.user.id, req.body || {});
+  const result = await ordersService.checkout(req.user, req.body || {});
   res.status(result.paymentStatus === "SUCCESS" ? 201 : 200).json(result);
 });
 
