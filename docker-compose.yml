@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: promo_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: promo
+      POSTGRES_PASSWORD: promo
+      POSTGRES_DB: promo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - promo_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U promo -d promo_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  promo_pgdata:

@@ -1,0 +1,219 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FLAT
+}
+
+enum PromotionStatus {
+  ACTIVE
+  PAUSED
+}
+
+enum OrderStatus {
+  COMPLETED
+  FAILED
+}
+
+enum PaymentStatus {
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  cart        Cart?
+  orders      Order[]
+  redemptions Redemption[]
+
+  @@map("users")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  products            Product[]
+  promotionCategories PromotionCategory[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Decimal  @db.Decimal(12, 2)
+  image       String
+  categoryId  String   @map("category_id")
+  stock       Int
+  sku         String   @unique
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  category   Category    @relation(fields: [categoryId], references: [id])
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@index([categoryId])
+  @@map("products")
+}
+
+model Cart {
+  id         String   @id @default(uuid())
+  userId     String   @unique @map("user_id")
+  couponCode String?  @map("coupon_code")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  user  User       @relation(fields: [userId], references: [id])
+  items CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  cartId    String   @map("cart_id")
+  productId String   @map("product_id")
+  quantity  Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
+  @@map("cart_items")
+}
+
+model Promotion {
+  id                     String          @id @default(uuid())
+  code                   String          @unique
+  name                   String
+  discountType           DiscountType    @map("discount_type")
+  discountValue          Decimal         @db.Decimal(12, 2) @map("discount_value")
+  maximumDiscount        Decimal?        @db.Decimal(12, 2) @map("maximum_discount")
+  minimumOrderValue      Decimal         @db.Decimal(12, 2) @default(0) @map("minimum_order_value")
+  appliesToAllCategories Boolean         @default(true) @map("applies_to_all_categories")
+  status                 PromotionStatus @default(ACTIVE)
+  startAt                DateTime        @map("start_at")
+  endAt                  DateTime        @map("end_at")
+  totalUsageLimit        Int?            @map("total_usage_limit")
+  perUserUsageLimit      Int?            @map("per_user_usage_limit")
+  currentUsage           Int             @default(0) @map("current_usage")
+  createdAt              DateTime        @default(now()) @map("created_at")
+  updatedAt              DateTime        @updatedAt @map("updated_at")
+
+  categories  PromotionCategory[]
+  redemptions Redemption[]
+
+  @@map("promotions")
+}
+
+model PromotionCategory {
+  id          String @id @default(uuid())
+  promotionId String @map("promotion_id")
+  categoryId  String @map("category_id")
+
+  promotion Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  category  Category  @relation(fields: [categoryId], references: [id])
+
+  @@unique([promotionId, categoryId])
+  @@map("promotion_categories")
+}
+
+model Redemption {
+  id             String       @id @default(uuid())
+  promotionId    String       @map("promotion_id")
+  userId         String       @map("user_id")
+  orderId        String       @unique @map("order_id")
+  couponCode     String       @map("coupon_code")
+  discountType   DiscountType @map("discount_type")
+  discountValue  Decimal      @db.Decimal(12, 2) @map("discount_value")
+  discountAmount Decimal      @db.Decimal(12, 2) @map("discount_amount")
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  promotion Promotion @relation(fields: [promotionId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+  order     Order     @relation(fields: [orderId], references: [id])
+
+  @@index([promotionId, userId])
+  @@map("redemptions")
+}
+
+model Order {
+  id              String        @id @default(uuid())
+  userId          String        @map("user_id")
+  subtotal        Decimal       @db.Decimal(12, 2)
+  discount        Decimal       @db.Decimal(12, 2) @default(0)
+  total           Decimal       @db.Decimal(12, 2)
+  couponCode      String?       @map("coupon_code")
+  customerName    String        @map("customer_name")
+  customerEmail   String        @map("customer_email")
+  customerAddress String        @map("customer_address")
+  status          OrderStatus
+  paymentStatus   PaymentStatus @map("payment_status")
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  user       User        @relation(fields: [userId], references: [id])
+  items      OrderItem[]
+  redemption Redemption?
+
+  @@index([userId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id           String  @id @default(uuid())
+  orderId      String  @map("order_id")
+  productId    String  @map("product_id")
+  productName  String  @map("product_name")
+  sku          String
+  categoryName String  @map("category_name")
+  quantity     Int
+  unitPrice    Decimal @db.Decimal(12, 2) @map("unit_price")
+  discount     Decimal @db.Decimal(12, 2) @default(0)
+  finalPrice   Decimal @db.Decimal(12, 2) @map("final_price")
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+model IdempotencyKey {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  userId    String   @map("user_id")
+  orderId   String?  @map("order_id")
+  response  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("idempotency_keys")
+}
